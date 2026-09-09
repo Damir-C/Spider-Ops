@@ -179,6 +179,17 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
 .modal-btn.cancel{background:var(--card);border:1px solid var(--border);color:var(--text2);}
 .modal-btn.cancel:hover{border-color:var(--orange);color:var(--orange);}
 
+/* In-app camera */
+#cam-overlay{display:none;position:fixed;inset:0;z-index:3000;background:#000;flex-direction:column;align-items:center;justify-content:center;}
+#cam-video{width:100%;height:100%;object-fit:contain;background:#000;}
+#cam-bar{position:absolute;left:0;right:0;bottom:0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:26px;background:linear-gradient(0deg,rgba(0,0,0,.85),transparent);}
+#cam-shutter{width:64px;height:64px;border-radius:50%;background:#fff;border:4px solid var(--orange);cursor:pointer;flex-shrink:0;}
+#cam-shutter:active{transform:scale(.94);}
+.cam-side{background:rgba(15,21,32,.85);border:1px solid var(--border);color:var(--text2);padding:9px 14px;border-radius:var(--radius);font-size:11px;letter-spacing:1px;cursor:pointer;}
+.cam-side:hover{border-color:var(--orange);color:var(--orange);}
+#cam-title{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-size:10px;letter-spacing:3px;color:var(--orange);pointer-events:none;}
+#cam-error{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--text2);font-size:12px;text-align:center;padding:16px;display:none;}
+
 /* Toast */
 #toast{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:6px 16px;font-size:11px;color:var(--text2);opacity:0;transition:opacity .2s;pointer-events:none;z-index:400;}
 #toast.show{opacity:1;}
@@ -201,6 +212,7 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
     <input type="file" id="floorplan-input" accept="image/*" style="display:none">
     <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none">
     <input type="file" id="entrance-photo-input" accept="image/*" style="display:none">
+    <input type="file" id="entrance-camera-input" accept="image/*" capture="environment" style="display:none">
 
   </div>
   <div id="topbar-center">
@@ -628,6 +640,18 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
   <div class="lp-item" onclick="selectLineType('cable')"><div class="lp-line" style="border-top:2px solid #9cc3e8;"></div><span style="color:#9cc3e8;">Cable</span></div>
   <div class="lp-item" onclick="selectLineType('fiber')"><div class="lp-line fiber"></div><span style="color:#975607;">Fiber</span></div>
   <div class="lp-item" onclick="selectLineType('beam')"><div class="lp-line beam" style="border-top-color:#8B5CF6;"></div><span style="color:#8B5CF6;">Beam</span></div>
+</div>
+
+<!-- IN-APP CAMERA -->
+<div id="cam-overlay">
+  <div id="cam-title">CAMERA</div>
+  <video id="cam-video" autoplay playsinline muted></video>
+  <div id="cam-error"></div>
+  <div id="cam-bar">
+    <button class="cam-side" onclick="closeCamera()">&#10005; CANCEL</button>
+    <button id="cam-shutter" title="Take photo" onclick="camShoot()"></button>
+    <button class="cam-side" onclick="camFlip()">&#8646; FLIP</button>
+  </div>
 </div>
 
 <!-- MODAL -->
@@ -1069,6 +1093,91 @@ function downscaleImage(src,maxDim,quality){
   });
 }
 
+// ── IN-APP CAMERA ──────────────────────────────────────────────────
+// The `capture` attribute is ignored by desktop browsers and inconsistent on
+// tablets, so we run the camera inside the page instead. That also means we
+// never leave the document — no lost fullscreen, no discarded page state.
+let camStream=null,camMode=null,camFacing='environment';
+
+function camSupported(){
+  return !!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.isSecureContext);
+}
+
+function camFallback(mode){
+  // No camera API (http://, old browser, permission denied) -> native picker
+  if(mode==='floorplan'){document.getElementById('camera-input').click();return;}
+  photoTargetId=mode.slice(9);
+  const el=document.getElementById('entrance-camera-input');
+  el.value='';el.click();
+}
+
+async function camStart(){
+  const v=document.getElementById('cam-video');
+  camStop();
+  camStream=await navigator.mediaDevices.getUserMedia({
+    video:{facingMode:{ideal:camFacing},width:{ideal:2560},height:{ideal:1440}},
+    audio:false
+  });
+  v.srcObject=camStream;
+  try{await v.play();}catch(e){}
+}
+
+async function openCamera(mode){
+  camMode=mode;
+  if(!camSupported()){camFallback(mode);return;}
+  const ov=document.getElementById('cam-overlay');
+  const err=document.getElementById('cam-error');
+  err.style.display='none';
+  document.getElementById('cam-title').textContent=(mode==='floorplan')?'FLOOR PLAN PHOTO':'ENTRANCE PHOTO';
+  ov.style.display='flex';
+  try{
+    await camStart();
+  }catch(e){
+    ov.style.display='none';
+    camFallback(mode);
+  }
+}
+
+function camStop(){
+  if(camStream){camStream.getTracks().forEach(t=>{try{t.stop();}catch(e){}});camStream=null;}
+  const v=document.getElementById('cam-video');
+  if(v)v.srcObject=null;
+}
+
+function closeCamera(){
+  camStop();
+  document.getElementById('cam-overlay').style.display='none';
+  camMode=null;
+}
+
+async function camFlip(){
+  camFacing=(camFacing==='environment')?'user':'environment';
+  try{await camStart();}catch(e){
+    camFacing=(camFacing==='environment')?'user':'environment';
+    try{await camStart();}catch(e2){}
+  }
+}
+
+function camShoot(){
+  const v=document.getElementById('cam-video');
+  if(!v||!v.videoWidth){return;}
+  const c=document.createElement('canvas');
+  c.width=v.videoWidth;c.height=v.videoHeight;
+  c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+  let raw;
+  try{raw=c.toDataURL('image/jpeg',0.92);}catch(e){closeCamera();return;}
+  const mode=camMode;
+  closeCamera();
+  if(mode==='floorplan'){
+    downscaleImage(raw,2400,0.85).then(openFpPreview);
+  }else if(mode&&mode.startsWith('entrance:')){
+    const id=mode.slice(9);
+    downscaleImage(raw,1600,0.8).then(small=>applyEntrancePhoto(id,small));
+  }
+}
+// never leave the camera running in the background
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&camStream)closeCamera();});
+
 // ── FLOOR PLAN ────────────────────────────────────────────────────────────────
 document.getElementById('upload-floorplan-btn').addEventListener('click',()=>document.getElementById('floorplan-input').click());
 let fpRotDeg=0,fpFlipH=false,fpFlipV=false;
@@ -1089,7 +1198,7 @@ function handleFpFile(e){
 }
 document.getElementById('floorplan-input').addEventListener('change',handleFpFile);
 document.getElementById('camera-input').addEventListener('change',handleFpFile);
-document.getElementById('camera-btn').addEventListener('click',()=>document.getElementById('camera-input').click());
+document.getElementById('camera-btn').addEventListener('click',()=>openCamera('floorplan'));
 function fpUpdatePreview(){
   const img=document.getElementById('fp-preview-img');
   let t=`rotate(${fpRotDeg}deg)`;
@@ -1422,8 +1531,12 @@ function renderEntrancePanels(group){
     if(idx>0)html+=`<div class="rs-sep"></div>`;
     if(group.length>1)html+=`<div style="font-size:9px;letter-spacing:2px;color:var(--orange);margin-bottom:8px;padding-top:${idx>0?'8px':'0'};border-top:${idx>0?'1px solid var(--border)':'none'};">ENTRANCE ${idx+1}</div>`;
     html+=`<div class="rs-field"><label class="rs-label">ENTRANCE PHOTO</label>`;
-    if(m.photo){html+=`<img src="${m.photo}" class="photo-preview" onclick="pickEntrancePhoto('${m.id}')" style="cursor:pointer;width:100%;border-radius:4px;max-height:280px;object-fit:contain;background:#0a0e14;">`;}
-    else{html+=`<div class="photo-drop" onclick="pickEntrancePhoto('${m.id}')"><div style="font-size:24px;opacity:.3;">&#128247;</div><p>Tap to capture or upload</p></div>`;}
+    if(m.photo){html+=`<img src="${m.photo}" class="photo-preview" onclick="openCamera('entrance:${m.id}')" style="cursor:pointer;width:100%;border-radius:4px;max-height:280px;object-fit:contain;background:#0a0e14;">`;}
+    else{html+=`<div class="photo-drop" onclick="openCamera('entrance:${m.id}')"><div style="font-size:24px;opacity:.3;">&#128247;</div><p>Tap to take a photo</p></div>`;}
+    html+=`<div style="display:flex;gap:6px;margin-top:6px;">
+      <button class="photo-replace" style="flex:1;margin-top:0;" onclick="openCamera('entrance:${m.id}')">&#9678; TAKE PHOTO</button>
+      <button class="photo-replace" style="flex:1;margin-top:0;" onclick="pickEntrancePhoto('${m.id}')">&#8593; UPLOAD</button>
+    </div>`;
     html+=`</div>
     <div class="rs-field"><label class="rs-label">NAME / LABEL</label>
       <input type="text" class="rs-input" value="${(m.label||'').replace(/"/g,'&quot;')}" placeholder="e.g. Entrance A" oninput="updateEntranceById('${m.id}','label',this.value)"></div>
@@ -1484,27 +1597,28 @@ function pickEntrancePhoto(id){
   const el=document.getElementById('entrance-photo-input');
   el.value='';el.click();
 }
-document.getElementById('entrance-photo-input').addEventListener('change',e=>{
+function applyEntrancePhoto(id,dataUrl){
+  const m=state.markers.find(x=>x.id===id);
+  if(!m)return; // marker deleted while the camera was open
+  m.photo=dataUrl;
+  const panel=document.getElementById('rs-entrance');
+  if(panel&&panel.style.display!=='none'){
+    const cur=state.markers.find(x=>x.id===state.selectedId);
+    if(cur&&cur.type==='entrance')renderEntrancePanels(getEntranceGroup(cur));
+  }
+  render();
+}
+function onEntrancePhotoFile(e){
   const f=e.target.files[0];
   const id=photoTargetId;
   e.target.value='';
   if(!f||!id)return;
   const r=new FileReader();
-  r.onload=ev=>{
-    downscaleImage(ev.target.result,1600,0.8).then(small=>{
-      const m=state.markers.find(x=>x.id===id);
-      if(!m)return; // marker deleted while the camera was open
-      m.photo=small;
-      const panel=document.getElementById('rs-entrance');
-      if(panel&&panel.style.display!=='none'){
-        const cur=state.markers.find(x=>x.id===state.selectedId);
-        if(cur&&cur.type==='entrance')renderEntrancePanels(getEntranceGroup(cur));
-      }
-      render();
-    });
-  };
+  r.onload=ev=>downscaleImage(ev.target.result,1600,0.8).then(small=>applyEntrancePhoto(id,small));
   r.readAsDataURL(f);
-});
+}
+document.getElementById('entrance-photo-input').addEventListener('change',onEntrancePhotoFile);
+document.getElementById('entrance-camera-input').addEventListener('change',onEntrancePhotoFile);
 
 function deleteEntranceById(id){
   const m=state.markers.find(x=>x.id===id);if(!m)return;
