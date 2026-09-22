@@ -27,7 +27,6 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* TOP BAR */
-#wind-widget{display:flex;align-items:center;gap:8px;padding:4px 10px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:6px;margin-left:8px;flex-shrink:0;}
 #topbar{height:52px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0;flex-shrink:0;z-index:100;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);}
 #logo-area{width:236px;min-width:236px;flex-shrink:0;height:52px;max-height:52px;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:3px 12px;border-right:1px solid var(--border);gap:3px;background:linear-gradient(90deg,#08090f 0%,transparent 100%);}
 .brand{display:flex;align-items:center;gap:8px;min-height:20px;}
@@ -64,7 +63,6 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
   #topbar-right{gap:5px;}
 }
 @media (max-width:900px){
-  #wind-widget{display:none;}
   .logo-text{display:none;}
 }
 
@@ -130,6 +128,14 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
 .rs-body{flex:1;overflow-y:auto;padding:12px;}
 .rs-field{margin-bottom:12px;}
 .rs-label{display:block;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+.eq-row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px;}
+.eq-name{font-size:11px;color:var(--text2);flex:1;min-width:0;}
+.stepper{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.stp-btn{width:30px;height:30px;background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--orange);font-size:19px;font-weight:700;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;user-select:none;-webkit-user-select:none;touch-action:manipulation;}
+.stp-btn:hover{border-color:var(--orange);background:#161d2b;}
+.stp-btn:active{transform:scale(.92);}
+.stp-val{width:40px;height:30px;background:var(--card);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:14px;font-weight:700;text-align:center;padding:0;-moz-appearance:textfield;}
+.stp-val::-webkit-outer-spin-button,.stp-val::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
 .rs-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 9px;color:var(--text);font-size:13px;transition:border-color .15s;}
 .rs-input:focus{border-color:var(--orange);outline:none;}
 .rs-textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:7px 9px;color:var(--text);font-size:13px;resize:vertical;min-height:60px;transition:border-color .15s;}
@@ -179,6 +185,20 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
 .modal-btn.cancel{background:var(--card);border:1px solid var(--border);color:var(--text2);}
 .modal-btn.cancel:hover{border-color:var(--orange);color:var(--orange);}
 
+/* Review mode */
+#rev-overlay{display:none;position:fixed;inset:0;z-index:2900;background:#05070c;align-items:center;justify-content:center;}
+#rev-canvas{max-width:calc(100% - 120px);max-height:calc(100% - 40px);object-fit:contain;}
+#rev-close{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));width:38px;height:38px;border-radius:50%;background:rgba(15,21,32,.9);border:1px solid var(--border);color:var(--text2);font-size:16px;cursor:pointer;z-index:2;}
+#rev-close:hover{border-color:var(--orange);color:var(--orange);}
+#rev-export{display:none;position:absolute;top:calc(16px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);padding:8px 16px;background:var(--card);border:1px solid var(--orange);color:var(--orange);border-radius:5px;font-size:11px;letter-spacing:2px;cursor:pointer;z-index:2;}
+#rev-export:hover{background:var(--orange);color:#0a0d14;}
+.rev-arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:76px;background:rgba(15,21,32,.85);border:1px solid var(--border);color:var(--text2);font-size:22px;cursor:pointer;border-radius:8px;z-index:2;}
+.rev-arrow:hover{border-color:var(--orange);color:var(--orange);}
+.rev-arrow:disabled{opacity:.25;cursor:default;border-color:var(--border);color:var(--muted);}
+#rev-prev{left:14px;}
+#rev-next{right:14px;}
+#rev-count{position:absolute;bottom:calc(14px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;font-size:10px;letter-spacing:3px;color:var(--muted);pointer-events:none;}
+
 /* In-app camera */
 #cam-overlay{display:none;position:fixed;inset:0;z-index:3000;background:#000;flex-direction:column;align-items:center;justify-content:center;}
 #cam-video{width:100%;height:100%;object-fit:contain;background:#000;}
@@ -217,41 +237,6 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
   </div>
   <div id="topbar-center">
     <span class="proj-label">CLIENT</span><input type="text" class="proj-field" id="proj-client" placeholder="e.g. Shell" value="Client">
-    <span style="color:var(--muted);margin:0 4px;">—</span>
-    <span class="proj-label">DEST</span><input type="text" class="proj-field" id="proj-dest" placeholder="e.g. Moerdijk" value="Destination" onchange="windLookupCity(this.value)">
-    <div id="wind-widget" title="Live wind data — updates from DEST">
-      <!-- SVG compass — Console theme, no KNMI, no station -->
-      <svg id="wind-svg" width="44" height="44" viewBox="0 0 62 62" style="flex-shrink:0;">
-        <circle cx="31" cy="31" r="30" fill="#0a0a0a" stroke="#2a2a2a" stroke-width="1.5"/>
-        <g stroke="#444" stroke-width="1">
-          <line x1="31" y1="3" x2="31" y2="9"/>
-          <line x1="31" y1="53" x2="31" y2="59"/>
-          <line x1="3" y1="31" x2="9" y2="31"/>
-          <line x1="53" y1="31" x2="59" y2="31"/>
-        </g>
-        <g stroke="#2a2a2a" stroke-width=".8">
-          <line x1="31" y1="3" x2="31" y2="6" transform="rotate(45 31 31)"/>
-          <line x1="31" y1="3" x2="31" y2="6" transform="rotate(135 31 31)"/>
-          <line x1="31" y1="3" x2="31" y2="6" transform="rotate(225 31 31)"/>
-          <line x1="31" y1="3" x2="31" y2="6" transform="rotate(315 31 31)"/>
-        </g>
-        <text x="31" y="16" text-anchor="middle" fill="#50c050" font-family="'IBM Plex Mono',monospace" font-size="7" font-weight="600">N</text>
-        <text x="31" y="51" text-anchor="middle" fill="#555" font-family="'IBM Plex Mono',monospace" font-size="7">Z</text>
-        <text x="50" y="33.5" text-anchor="middle" fill="#555" font-family="'IBM Plex Mono',monospace" font-size="7">O</text>
-        <text x="12" y="33.5" text-anchor="middle" fill="#555" font-family="'IBM Plex Mono',monospace" font-size="7">W</text>
-        <circle cx="31" cy="31" r="18" fill="none" stroke="#2a2a2a" stroke-width=".8" stroke-dasharray="2,4"/>
-        <g id="wind-needle" style="transform-origin:31px 31px;transition:transform .9s cubic-bezier(.34,1.56,.64,1)">
-          <polygon points="31,10 34,31 31,28 28,31" fill="#50c050"/>
-          <polygon points="31,52 34,31 31,34 28,31" fill="#2a2a2a"/>
-        </g>
-        <circle cx="31" cy="31" r="3" fill="#141414" stroke="#50c050" stroke-width="1.2"/>
-      </svg>
-      <div style="display:flex;flex-direction:column;gap:1px;min-width:36px;">
-        <div id="wind-dir" style="font-size:11px;color:#50c050;font-weight:700;letter-spacing:2px;font-family:'IBM Plex Mono',monospace;">---</div>
-        <div id="wind-spd" style="font-size:15px;font-weight:700;color:#a0c8a0;font-family:'IBM Plex Mono',monospace;line-height:1;">--</div>
-        <div style="font-size:8px;color:#4a6a4a;letter-spacing:1px;font-family:'IBM Plex Mono',monospace;">M/S</div>
-      </div>
-    </div>
     <button class="tb-btn" onclick="saveProject()">SAVE</button>
     <button class="tb-btn" onclick="loadProject()">LOAD</button>
     <input type="file" id="load-input" accept=".json" style="display:none">
@@ -265,8 +250,8 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
       <input type="range" min="5" max="60" value="60" id="wm-opacity" style="width:50px;display:inline-block;" oninput="updateWmOpacity(this.value)">
     </div>
     <div style="width:1px;height:14px;background:var(--border);"></div>
-    <button onclick="exportPNG()" style="padding:4px 8px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:4px;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">PNG</button>
-    <button onclick="exportJSON()" style="padding:4px 8px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:4px;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">JSON</button>
+    <button onclick="exportPNG()" style="padding:4px 8px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:4px;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">EXPORT</button>
+    <button onclick="openReview()" style="padding:4px 8px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:4px;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all .15s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">REVIEW</button>
     <button onclick="toggleFullscreen()" title="Fullscreen" style="padding:4px 7px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;font-size:12px;cursor:pointer;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">&#9974;</button>
   </div>
 </div>
@@ -642,6 +627,16 @@ input,textarea,select{font-family:inherit;font-size:12px;outline:none;}
   <div class="lp-item" onclick="selectLineType('beam')"><div class="lp-line beam" style="border-top-color:#8B5CF6;"></div><span style="color:#8B5CF6;">Beam</span></div>
 </div>
 
+<!-- REVIEW MODE -->
+<div id="rev-overlay">
+  <canvas id="rev-canvas"></canvas>
+  <button id="rev-close" onclick="closeReview()" title="Close review">&#10005;</button>
+  <button id="rev-export" onclick="exportSummary()" title="Export summary as PNG">EXPORT SUMMARY</button>
+  <button class="rev-arrow" id="rev-prev" onclick="revStep(-1)" title="Previous">&#10094;</button>
+  <button class="rev-arrow" id="rev-next" onclick="revStep(1)" title="Next">&#10095;</button>
+  <div id="rev-count"></div>
+</div>
+
 <!-- IN-APP CAMERA -->
 <div id="cam-overlay">
   <div id="cam-title">CAMERA</div>
@@ -705,6 +700,8 @@ const genId=()=>`${Date.now()}-${Math.random().toString(36).substr(2,5)}`;
 // Live page fields kept on `state`; snapshots stored in state.pages. Low-risk snapshot-swap.
 const PAGE_LIVE_FIELDS=['markers','connections','floorPlan','strokes','scale','scaleLabel','compassDeg','fpRotation','fpFlipH','fpFlipV','pageType','compassVisible'];
 function snapshotActivePage(){
+  const _p=state.pages.find(x=>x.id===state.activePageId);
+  if(_p)_p.vp={...vp};
   const p=state.pages.find(x=>x.id===state.activePageId); if(!p)return;
   PAGE_LIVE_FIELDS.forEach(f=>{p[f]=state[f];});
   p.selectedId=state.selectedId;
@@ -712,6 +709,7 @@ function snapshotActivePage(){
 }
 function loadPageIntoLive(p){
   PAGE_LIVE_FIELDS.forEach(f=>{state[f]=(p[f]!==undefined?p[f]:(Array.isArray(state[f])?[]:null));});
+  if(p.vp)vp={...p.vp};
   if(!Array.isArray(state.markers))state.markers=[];
   if(!Array.isArray(state.connections))state.connections=[];
   if(!Array.isArray(state.strokes))state.strokes=[];
@@ -813,7 +811,8 @@ function renderTabs(){
 }
 const ptDist=(a,b)=>Math.sqrt((b.x-a.x)**2+(b.y-a.y)**2);
 const routeLen=pts=>pts.length<2?0:pts.slice(1).reduce((s,p,i)=>s+ptDist(pts[i],p),0);
-function getProjName(){const c=(document.getElementById('proj-client').value||'Client').trim();const d=(document.getElementById('proj-dest').value||'Destination').trim();return c+' - '+d;}
+function getProjName(){return (document.getElementById('proj-client').value||'Client').trim();}
+function getPageName(){const p=state.pages.find(x=>x.id===state.activePageId);return (p&&p.name)?p.name:'Page';}
 
 // ── CANVAS ───────────────────────────────────────────────────────────────────
 const wrap=document.getElementById('canvas-wrap');
@@ -1093,6 +1092,174 @@ function downscaleImage(src,maxDim,quality){
   });
 }
 
+// ── REVIEW MODE ─────────────────────────────────────────────────────
+// Walks every entrance on every page, rendered exactly as EXPORT would render
+// it, then finishes on a summary matrix: one column per entrance, plus a total.
+const REV_S=2;                    // lighter than export's 3x — many pages to build
+let revSlides=[],revIndex=0,revReturnPageId=null;
+
+function collectEntrances(){
+  const out=[];
+  state.pages.forEach(p=>{
+    (p.markers||[]).filter(m=>m.type==='entrance').forEach(m=>{
+      out.push({pageId:p.id,pageName:p.name,entId:m.id,ent:m});
+    });
+  });
+  return out;
+}
+
+function openReview(){
+  snapshotActivePage();
+  const list=collectEntrances();
+  if(!list.length){alert('No entrances placed yet — nothing to review.');return;}
+  revReturnPageId=state.activePageId;
+  const selWas=state.selectedId;
+  revSlides=[];
+  list.forEach(it=>{
+    const pg=state.pages.find(p=>p.id===it.pageId);
+    if(!pg)return;
+    loadPageIntoLive(pg);
+    state.activePageId=pg.id;
+    const ent=state.markers.find(m=>m.id===it.entId);
+    if(!ent)return;
+    state.selectedId=ent.id;   // drives the 60% dimming of every other marker
+    revSlides.push({canvas:composeExport({S:REV_S,ent}),label:(ent.label||'Entrance')+'  \u2014  '+pg.name});
+  });
+  // restore the working page before building the summary
+  const back=state.pages.find(p=>p.id===revReturnPageId)||state.pages[0];
+  loadPageIntoLive(back);state.activePageId=back.id;state.selectedId=selWas;
+  revSlides.push({canvas:buildSummaryCanvas(list),label:'SUMMARY'});
+  renderTabs();render();
+  revIndex=0;
+  document.getElementById('rev-overlay').style.display='flex';
+  showRevSlide();
+}
+
+function closeReview(){
+  document.getElementById('rev-overlay').style.display='none';
+  revSlides=[];revIndex=0;
+}
+
+function revStep(d){
+  if(!revSlides.length)return;
+  revIndex=Math.min(revSlides.length-1,Math.max(0,revIndex+d));
+  showRevSlide();
+}
+
+function showRevSlide(){
+  const src=revSlides[revIndex];
+  if(!src)return;
+  const c=document.getElementById('rev-canvas');
+  c.width=src.canvas.width;c.height=src.canvas.height;
+  c.getContext('2d').drawImage(src.canvas,0,0);
+  document.getElementById('rev-count').textContent=
+    `${revIndex+1} / ${revSlides.length}   \u00b7   ${src.label}`;
+  document.getElementById('rev-prev').disabled=(revIndex===0);
+  document.getElementById('rev-next').disabled=(revIndex===revSlides.length-1);
+  document.getElementById('rev-export').style.display=(src.label==='SUMMARY')?'block':'none';
+}
+
+// Summary matrix: rows = equipment items, columns = entrances, last column = total.
+function buildSummaryCanvas(list,scale){
+  const S=scale||REV_S;
+  const rows=EQ_FIELDS;
+  const labW=210*S;
+  const colW=Math.max(84*S,Math.min(150*S,(960*S)/Math.max(1,list.length+1)));
+  const rowH=46*S, headH=196*S, pad=30*S;
+  const tableW=labW+colW*(list.length+1);
+  const c=document.createElement('canvas');
+  c.width=Math.max(760*S,tableW+pad*2);
+  c.height=headH+rowH*rows.length+pad*2+58*S;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#0a0d14';ctx.fillRect(0,0,c.width,c.height);
+  ctx.textBaseline='top';
+
+  // title block
+  ctx.fillStyle='#FF7A00';ctx.font=`700 ${11*S}px 'Exo 2',sans-serif`;ctx.textAlign='left';
+  ctx.fillText('EQUIPMENT SUMMARY',pad,pad);
+  ctx.fillStyle='#E8EEF7';ctx.font=`700 ${22*S}px 'Exo 2',sans-serif`;
+  ctx.fillText(getProjName(),pad,pad+19*S);
+
+  const x0=pad, y0=pad+headH-34*S;
+  const colX=i=>x0+labW+colW*i;
+  const totX=colX(list.length);
+  const tableBottom=y0+rowH*rows.length;
+
+  // total column gets a tinted band so the eye lands on it
+  ctx.fillStyle='rgba(255,122,0,0.07)';
+  ctx.fillRect(totX,y0-6*S,colW,tableBottom-y0+6*S);
+
+  // angled headers: entrance name in blue, its sheet underneath in grey
+  list.forEach((it,i)=>{
+    ctx.save();
+    ctx.translate(colX(i)+colW*0.5,y0-34*S);
+    ctx.rotate(-Math.PI/4);
+    ctx.textAlign='left';
+    ctx.fillStyle='#5BA8F5';ctx.font=`700 ${15*S}px 'Exo 2',sans-serif`;
+    ctx.fillText(it.ent.label||'Entrance',0,0);
+    ctx.fillStyle='#8A97AD';ctx.font=`${11*S}px 'Exo 2',sans-serif`;
+    ctx.fillText(it.pageName||'',0,18*S);
+    ctx.restore();
+  });
+  ctx.save();
+  ctx.translate(totX+colW*0.5,y0-34*S);
+  ctx.rotate(-Math.PI/4);
+  ctx.textAlign='left';ctx.fillStyle='#FF7A00';ctx.font=`700 ${15*S}px 'Exo 2',sans-serif`;
+  ctx.fillText('TOTAL',0,0);
+  ctx.restore();
+
+  // header rule
+  ctx.strokeStyle='#2a3550';ctx.lineWidth=1.5*S;
+  ctx.beginPath();ctx.moveTo(x0,y0-6*S);ctx.lineTo(x0+tableW,y0-6*S);ctx.stroke();
+
+  rows.forEach(([key,lab],r)=>{
+    const ry=y0+rowH*r;
+    if(r%2===1){ctx.fillStyle='rgba(255,255,255,0.022)';ctx.fillRect(x0,ry,tableW,rowH);}
+    ctx.fillStyle='#A9B4C6';ctx.font=`${15*S}px 'Exo 2',sans-serif`;ctx.textAlign='left';
+    ctx.fillText(lab,x0+6*S,ry+13*S);
+    let total=0;
+    list.forEach((it,i)=>{
+      const v=eqNum(it.ent[key]);total+=v;
+      ctx.fillStyle=v>0?'#E8EEF7':'#39445A';
+      ctx.font=`700 ${17*S}px 'Exo 2',sans-serif`;ctx.textAlign='center';
+      ctx.fillText(String(v),colX(i)+colW*0.5,ry+12*S);
+    });
+    ctx.fillStyle=total>0?'#FF7A00':'#5a4520';
+    ctx.font=`700 ${19*S}px 'Exo 2',sans-serif`;ctx.textAlign='center';
+    ctx.fillText(String(total),totX+colW*0.5,ry+11*S);
+    ctx.strokeStyle='rgba(42,53,80,0.75)';ctx.lineWidth=1*S;
+    ctx.beginPath();ctx.moveTo(x0,ry+rowH);ctx.lineTo(x0+tableW,ry+rowH);ctx.stroke();
+  });
+
+  // divider in front of the total column
+  ctx.strokeStyle='#FF7A00';ctx.lineWidth=2*S;
+  ctx.beginPath();ctx.moveTo(totX,y0-6*S);ctx.lineTo(totX,tableBottom);ctx.stroke();
+
+  if(state.wmEnabled&&WM_IMG.complete&&WM_IMG.naturalWidth>0){
+    ctx.globalAlpha=state.wmOpacity/100;
+    const ww=150*S,wh=WM_IMG.naturalHeight*(ww/WM_IMG.naturalWidth);
+    ctx.drawImage(WM_IMG,pad,c.height-wh-pad*0.4,ww,wh);
+    ctx.globalAlpha=1;
+  }
+  return c;
+}
+
+// Export the summary at full resolution from within review.
+function exportSummary(){
+  snapshotActivePage();
+  const cv=buildSummaryCanvas(collectEntrances(),3);
+  const a=document.createElement('a');a.href=cv.toDataURL('image/png');
+  const safe=v=>(v||'').toString().replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+  a.download=safe(getProjName())+'_Equipment_Summary.png';a.click();
+}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('rev-overlay').style.display!=='flex')return;
+  if(e.key==='Escape')closeReview();
+  if(e.key==='ArrowLeft')revStep(-1);
+  if(e.key==='ArrowRight')revStep(1);
+});
+
 // ── IN-APP CAMERA ──────────────────────────────────────────────────
 // The `capture` attribute is ignored by desktop browsers and inconsistent on
 // tablets, so we run the camera inside the page instead. That also means we
@@ -1342,7 +1509,7 @@ function handleClick(wp,e){
   }
   if(activeTool==='entrance'){
     pushUndo();
-    const m={id:genId(),type:'entrance',x:wp.x,y:wp.y,label:`E-${state.markers.filter(m=>m.type==='entrance').length+1}`,photo:null,height:'',gases:'',o2:'',co:'',h2s:'',lel:'',cam2:'',blackline:'',pbm:'',notes:'',arrowDeg:0,labelSize:12};
+    const m={id:genId(),type:'entrance',x:wp.x,y:wp.y,label:`E-${state.markers.filter(m=>m.type==='entrance').length+1}`,photo:null,height:'',gases:'',o2:0,co:0,h2s:0,lel:0,blackline:0,pbm:'',notes:'',arrowDeg:0,labelSize:12};
     state.markers.push(m);state.selectedId=m.id;setTool('select');
     openEntranceEditor(m);
     updateStatusCounts();render();return;
@@ -1522,6 +1689,24 @@ function getEntranceGroup(m){
   return state.markers.filter(x=>x.type==='entrance'&&(x.groupId||x.id)===gid);
 }
 
+// The five entrance equipment counts. Keys are historical (co/h2s/lel were gas
+// fields once) — kept as-is so older project files still load.
+const EQ_FIELDS=[['co','Badge Unit'],['h2s','Camera Unit'],['lel','Alarm Unit'],['blackline','Blackline'],['o2','Inlets']];
+function eqNum(v){const n=parseInt(v,10);return (isNaN(n)||n<0)?0:n;}
+function setEnt(id,field,val){
+  const m=state.markers.find(x=>x.id===id);
+  if(!m)return;
+  m[field]=eqNum(val);
+  updateStatusCounts();
+  if(document.getElementById('rs-calc').style.display!=='none')buildCalcPanel();
+}
+function bumpEnt(id,field,delta){
+  const m=state.markers.find(x=>x.id===id);
+  if(!m)return;
+  m[field]=Math.max(0,eqNum(m[field])+delta);
+  renderEntrancePanels(getEntranceGroup(m));
+  if(document.getElementById('rs-calc').style.display!=='none')buildCalcPanel();
+}
 function renderEntrancePanels(group){
   const body=document.getElementById('rs-entrance-body');
   if(!body||!group||group.length===0)return;
@@ -1544,20 +1729,16 @@ function renderEntrancePanels(group){
       <input type="range" min="8" max="32" step="1" value="${m.labelSize||12}" style="width:100%;" oninput="updateEntranceById('${m.id}','labelSize',parseInt(this.value))"></div>
     <div class="rs-sep"></div>
     <div class="rs-field"><label class="rs-label">EQUIPMENT</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-        <div><label class="rs-label" style="font-size:8px;">Badge Unit</label>
-          <input type="text" class="rs-input" value="${m.co||''}" placeholder="e.g. BU004" oninput="updateEntranceById('${m.id}','co',this.value)"></div>
-        <div><label class="rs-label" style="font-size:8px;">Camera Unit</label>
-          <input type="text" class="rs-input" value="${m.h2s||''}" placeholder="e.g. CU001" oninput="updateEntranceById('${m.id}','h2s',this.value)"></div>
-        <div><label class="rs-label" style="font-size:8px;">Alarm Unit</label>
-          <input type="text" class="rs-input" value="${m.lel||''}" placeholder="e.g. AU002" oninput="updateEntranceById('${m.id}','lel',this.value)"></div>
-        <div><label class="rs-label" style="font-size:8px;">Camera Unit 2</label>
-          <input type="text" class="rs-input" value="${m.cam2||''}" placeholder="e.g. CU002" oninput="updateEntranceById('${m.id}','cam2',this.value)"></div>
-        <div><label class="rs-label" style="font-size:8px;">Blackline</label>
-          <input type="text" class="rs-input" value="${m.blackline||''}" placeholder="e.g. BL001" oninput="updateEntranceById('${m.id}','blackline',this.value)"></div>
-        <div><label class="rs-label" style="font-size:8px;">Inlets</label>
-          <input type="number" class="rs-input" value="${m.o2||''}" placeholder="0" step="1" min="0" oninput="updateEntranceById('${m.id}','o2',this.value)"></div>
-      </div></div>
+      ${EQ_FIELDS.map(([key,lab])=>`
+      <div class="eq-row">
+        <span class="eq-name">${lab}</span>
+        <div class="stepper">
+          <button class="stp-btn" onclick="bumpEnt('${m.id}','${key}',-1)">&minus;</button>
+          <input type="number" class="stp-val" min="0" step="1" value="${eqNum(m[key])}" oninput="setEnt('${m.id}','${key}',this.value)">
+          <button class="stp-btn" onclick="bumpEnt('${m.id}','${key}',1)">&plus;</button>
+        </div>
+      </div>`).join('')}
+    </div>
     <div class="rs-sep"></div>
     <div class="rs-field"><label class="rs-label">GASES</label>
       <input type="text" class="rs-input" value="${(m.gases||'').replace(/"/g,'&quot;')}" placeholder="e.g. H2S, CO, LEL" oninput="updateEntranceById('${m.id}','gases',this.value)"></div>
@@ -1645,7 +1826,7 @@ function addStackedEntrance(gid){
   const group=getEntranceGroup(primary);
   const newEnt={id:genId(),type:'entrance',x:primary.x,y:primary.y,
     label:`${primary.label}-${group.length+1}`,groupId:primary.groupId,
-    photo:null,height:'',gases:'',o2:'',co:'',h2s:'',lel:'',cam2:'',blackline:'',pbm:'',notes:'',arrowDeg:0,labelSize:12};
+    photo:null,height:'',gases:'',o2:0,co:0,h2s:0,lel:0,blackline:0,pbm:'',notes:'',arrowDeg:0,labelSize:12};
   state.markers.push(newEnt);
   state.selectedId=primary.id;
   renderEntrancePanels(getEntranceGroup(primary));
@@ -1740,20 +1921,23 @@ function startCalibrate(){
 }
 
 // ── CALC ───────────────────────────────────────────────────────────────────────
+// Sums the five entrance counts across a set of markers, plus any placed
+// equipment icons. Entrance items are always listed, zero included.
+function calcEquipment(markers){
+  const ec={};
+  const ents=markers.filter(m=>m.type==='entrance');
+  if(ents.length){
+    EQ_FIELDS.forEach(([key,lab])=>{ec[lab]=0;});
+    ents.forEach(m=>{EQ_FIELDS.forEach(([key,lab])=>{ec[lab]+=eqNum(m[key]);});});
+  }
+  markers.filter(m=>m.type==='equipment').forEach(m=>{
+    const c=m.category||m.label;ec[c]=(ec[c]||0)+1;
+  });
+  return ec;
+}
 function buildCalcPanel(){
   const body=document.getElementById('calc-body');
-  // Equipment from placed icons
-  const ec={};
-  state.markers.filter(m=>m.type==='equipment').forEach(m=>{const c=m.category||m.label;ec[c]=(ec[c]||0)+1;});
-  // Equipment from entrance fields
-  const entEqMap={'co':'Badge Unit','h2s':'Camera Unit','lel':'Alarm Unit','cam2':'Camera Unit','blackline':'Blackline'};
-  state.markers.filter(m=>m.type==='entrance').forEach(m=>{
-    Object.entries(entEqMap).forEach(([field,cat])=>{
-      const v=m[field]||'';
-      const filled=v.trim()!==''&&v.trim()!=='0';
-      if(filled){ec[cat]=(ec[cat]||0)+1;}
-    });
-  });
+  const ec=calcEquipment(state.markers);
   // Connections
   const cl={cable:0,fiber:0,beam:0};
   state.connections.forEach(c=>{const m=state.scale&&state.scale>0?routeLen(c.points)/state.scale:0;cl[c.lineType||'cable']+=m;});
@@ -1774,12 +1958,11 @@ function buildCalcPanel(){
   if(fcuCount>0)allEc['FCU Unit']=(allEc['FCU Unit']||0)+fcuCount;
   if(Object.keys(allEc).length){
     html+=`<div style="margin-bottom:14px;"><div style="font-size:9px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--border);">EQUIPMENT</div>`;
-    html+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;align-items:center;margin-bottom:4px;"><span style="font-size:9px;color:var(--muted);letter-spacing:1px;">ITEM</span><span style="font-size:9px;color:var(--muted);letter-spacing:1px;text-align:right;">QTY</span><span style="font-size:9px;color:var(--muted);letter-spacing:1px;text-align:center;">+RES</span></div>`;
+    html+=`<div style="display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center;margin-bottom:4px;"><span style="font-size:9px;color:var(--muted);letter-spacing:1px;">ITEM</span><span style="font-size:9px;color:var(--muted);letter-spacing:1px;text-align:right;">QTY</span></div>`;
     Object.entries(allEc).forEach(([k,v])=>{
-      html+=`<div style="display:grid;grid-template-columns:1fr auto auto;gap:4px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(26,36,56,0.3);">
+      html+=`<div style="display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center;padding:3px 0;border-bottom:1px solid rgba(26,36,56,0.3);">
         <span style="font-size:12px;color:var(--text2);">${k}</span>
-        <span style="color:var(--blue);font-family:'Courier New',monospace;font-weight:600;min-width:28px;text-align:right;">${v}</span>
-        <input type="number" min="0" value="0" style="width:48px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:3px 5px;color:var(--text);font-size:11px;text-align:right;">
+        <span style="color:${v>0?'var(--blue)':'var(--muted)'};font-family:'Courier New',monospace;font-weight:600;min-width:28px;text-align:right;">${v}</span>
       </div>`;
     });
     html+=`</div>`;
@@ -1869,7 +2052,7 @@ document.getElementById('modal-input').addEventListener('keydown',e=>{if(e.key==
 // ── SAVE / LOAD ─────────────────────────────────────────────────────────────────
 function saveProject(){
   ensurePages();snapshotActivePage();
-  const data={version:2,projClient:document.getElementById('proj-client').value,projDest:document.getElementById('proj-dest').value,pages:state.pages,activePageId:state.activePageId,wmEnabled:state.wmEnabled,wmOpacity:state.wmOpacity,equipIcons:state.equipIcons};
+  const data={version:2,projClient:document.getElementById('proj-client').value,pages:state.pages,activePageId:state.activePageId,wmEnabled:state.wmEnabled,wmOpacity:state.wmOpacity,equipIcons:state.equipIcons};
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));
   a.download=getProjName().replace(/\s+/g,'_')+'.json';a.click();
@@ -1881,7 +2064,6 @@ document.getElementById('load-input').addEventListener('change',e=>{
   r.onload=ev=>{
     const d=JSON.parse(ev.target.result);
     document.getElementById('proj-client').value=d.projClient||d.projName||'Client';
-    document.getElementById('proj-dest').value=d.projDest||'Destination';
     state.wmEnabled=d.wmEnabled||false;state.wmOpacity=d.wmOpacity||20;
     state.equipIcons=d.equipIcons||[];
     if(d.pages&&d.pages.length){
@@ -1909,23 +2091,6 @@ document.getElementById('load-input').addEventListener('change',e=>{
 });
 
 // ── EXPORT ─────────────────────────────────────────────────────────────────────
-function exportJSON(){
-  const ent=getSelectedEntrance();
-  let payload, fname;
-  if(ent){
-    // client-facing single-entrance export: only equipment list + gases
-    const eq={};[['Badge Unit',ent.co],['Camera Unit',ent.h2s],['Alarm Unit',ent.lel],['Camera Unit 2',ent.cam2],['Blackline',ent.blackline],['Inlets',ent.o2]]
-      .forEach(([lab,val])=>{val=(val||'').toString().trim();if(val!==''&&val!=='0')eq[lab]=val;});
-    payload={project:getProjName(),entrance:ent.label||'Entrance',equipment:eq,gases:ent.gases||''};
-    fname=getProjName().replace(/\s+/g,'_')+'_'+(ent.label||'entrance').replace(/[^a-zA-Z0-9]+/g,'_')+'.json';
-  }else{
-    payload={projName:getProjName(),projClient:document.getElementById('proj-client').value,projDest:document.getElementById('proj-dest').value,scale:state.scale,markers:state.markers,connections:state.connections};
-    fname=getProjName().replace(/\s+/g,'_')+'_export.json';
-  }
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
-  a.download=fname;a.click();
-}
 function drawCompassOnCtx(ctx,w,h){
   const cx=w-40,cy=40,r=22;
   ctx.save();ctx.translate(cx,cy);ctx.rotate(state.compassDeg*Math.PI/180);
@@ -1943,35 +2108,114 @@ function getSelectedEntrance(){
   const m=state.markers.find(x=>x.id===id);
   return (m&&m.type==='entrance')?m:null;
 }
-function exportPNG(){
-  const S=3;
-  const ent=getSelectedEntrance();
-  const panelW=ent?Math.round(320*S):0; // client panel width (device px)
+// Page name stamped top-left on every export, watermark style.
+function drawPageWatermark(ctx,S,name){
+  if(!name)return;
+  ctx.save();
+  ctx.globalAlpha=0.55;
+  ctx.font=`700 ${26*S}px 'Exo 2',sans-serif`;
+  ctx.textAlign='left';ctx.textBaseline='top';
+  ctx.fillStyle='#E8850A';
+  ctx.fillText(name,16*S,14*S);
+  ctx.restore();
+}
+
+// Renders the current page (plus an optional side panel) into a fresh canvas.
+// opts: {ent} draws the entrance report panel, {calc:true} draws the calc panel.
+function composeExport(opts){
+  const S=opts.S||3;
+  const ent=opts.ent||null;
+  const calc=!!opts.calc;
+  const panelW=(ent||calc)?Math.round(320*S):0;
   const oW=mc.width,oH=mc.height,oVp={...vp};
   mc.width=oW*S;mc.height=oH*S;uc.width=oW*S;uc.height=oH*S;
   vp={x:oVp.x*S,y:oVp.y*S,scale:oVp.scale*S};
   render();
-  const exp=document.createElement('canvas');exp.width=mc.width+panelW;exp.height=mc.height;
+  const exp=document.createElement('canvas');
+  exp.width=mc.width+panelW;exp.height=mc.height;
   const ctx=exp.getContext('2d');
   ctx.fillStyle='#0d1117';ctx.fillRect(0,0,exp.width,exp.height);
   ctx.drawImage(mc,0,0);
   if(!ent&&state.compassVisible){ctx.save();ctx.scale(S,S);drawCompassOnCtx(ctx,oW,oH);ctx.restore();}
   mc.width=oW;mc.height=oH;uc.width=oW;uc.height=oH;vp=oVp;render();
-  const finish=()=>{
-    if(ent) drawClientPanel(ctx,ent,exp.width-panelW,0,panelW,exp.height,S);
-    else if(state.wmEnabled) drawConnectionLegend(ctx,S);
-    doDownloadPNG(exp,ent);
-  };
-  const stampWm=()=>{
+  if(state.wmEnabled&&WM_IMG.complete&&WM_IMG.naturalWidth>0){
     ctx.globalAlpha=state.wmOpacity/100;
-    const w=Math.min(mc.width*S*0.25,200*S),h=WM_IMG.naturalHeight*(w/WM_IMG.naturalWidth);
-    ctx.drawImage(WM_IMG,12*S,exp.height-h-12*S,w,h);
-    ctx.globalAlpha=1;finish();
+    const ww=Math.min(mc.width*S*0.25,200*S),wh=WM_IMG.naturalHeight*(ww/WM_IMG.naturalWidth);
+    ctx.drawImage(WM_IMG,12*S,exp.height-wh-12*S,ww,wh);
+    ctx.globalAlpha=1;
+  }
+  drawPageWatermark(ctx,S,getPageName());
+  if(ent)      drawClientPanel(ctx,ent,exp.width-panelW,0,panelW,exp.height,S);
+  else if(calc)drawCalcPanelOnCtx(ctx,exp.width-panelW,0,panelW,exp.height,S);
+  else if(state.wmEnabled) drawConnectionLegend(ctx,S);
+  return exp;
+}
+
+function exportPNG(){
+  // whichever panel is on screen is what gets exported
+  const calcOpen=document.getElementById('rs-calc').style.display!=='none';
+  const ent=calcOpen?null:getSelectedEntrance();
+  const go=()=>doDownloadPNG(composeExport({S:3,ent,calc:calcOpen}),ent);
+  if(state.wmEnabled&&!(WM_IMG.complete&&WM_IMG.naturalWidth>0))
+    WM_IMG.addEventListener('load',go,{once:true});
+  else go();
+}
+
+// Calc panel rendered onto the export canvas — same numbers as the sidebar.
+function drawCalcPanelOnCtx(ctx,x,y,w,h,S){
+  const pad=18*S;
+  ctx.save();
+  ctx.fillStyle='#0d1117';ctx.fillRect(x,y,w,h);
+  ctx.strokeStyle='#E8850A';ctx.lineWidth=2*S;
+  ctx.beginPath();ctx.moveTo(x+1*S,y);ctx.lineTo(x+1*S,y+h);ctx.stroke();
+  ctx.textBaseline='top';
+  let cy=y+pad;
+  const section=(title)=>{
+    ctx.textAlign='left';ctx.fillStyle='#E8850A';ctx.font=`700 ${9*S}px 'Exo 2',sans-serif`;
+    ctx.fillText(title,x+pad,cy);cy+=6*S;
+    ctx.strokeStyle='#2a3550';ctx.lineWidth=1*S;
+    ctx.beginPath();ctx.moveTo(x+pad,cy+8*S);ctx.lineTo(x+w-pad,cy+8*S);ctx.stroke();cy+=16*S;
   };
-  if(state.wmEnabled){
-    if(WM_IMG.complete&&WM_IMG.naturalWidth>0)stampWm();
-    else WM_IMG.addEventListener('load',stampWm,{once:true});
-  }else finish();
+  const row=(lab,val,strong)=>{
+    ctx.font=`${13*S}px 'Exo 2',sans-serif`;
+    ctx.fillStyle='#9fb0c8';ctx.textAlign='left';ctx.fillText(lab,x+pad,cy);
+    ctx.font=`700 ${14*S}px 'Exo 2',sans-serif`;
+    ctx.fillStyle=strong?'#E8850A':'#ffffff';ctx.textAlign='right';
+    ctx.fillText(String(val),x+w-pad,cy);
+    cy+=22*S;
+  };
+  ctx.fillStyle='#E8850A';ctx.font=`700 ${10*S}px 'Exo 2',sans-serif`;ctx.textAlign='left';
+  ctx.fillText('CALCULATE ITEMS',x+pad,cy);cy+=15*S;
+  ctx.fillStyle='#ffffff';ctx.font=`700 ${18*S}px 'Exo 2',sans-serif`;
+  ctx.fillText(getPageName(),x+pad,cy);cy+=26*S;
+
+  const entCount=state.markers.filter(m=>m.type==='entrance').length;
+  const rpCount=state.markers.filter(m=>m.type==='rally').length;
+  if(entCount||rpCount){
+    section('ACCESS POINTS');
+    if(entCount)row('Entrances',entCount);
+    if(rpCount)row('Rally Points',rpCount);
+    cy+=8*S;
+  }
+  const ec=calcEquipment(state.markers);
+  if(Object.keys(ec).length){
+    section('EQUIPMENT');
+    Object.entries(ec).forEach(([k,v])=>row(k,v));
+    cy+=8*S;
+  }
+  const cl={cable:0,fiber:0,beam:0};
+  state.connections.forEach(c=>{
+    const m=state.scale&&state.scale>0?routeLen(c.points)/state.scale:0;
+    cl[c.lineType||'cable']+=m;
+  });
+  if(cl.cable>0||cl.fiber>0||cl.beam>0){
+    section('CONNECTIONS');
+    const fmt=v=>state.scale?v.toFixed(1)+'m':'no scale';
+    if(cl.cable>0){row('Cable (raw)',fmt(cl.cable));row('Cable +20%',fmt(cl.cable*1.2),true);}
+    if(cl.fiber>0)row('Fiber (raw)',fmt(cl.fiber));
+    if(cl.beam>0)row('Beam (raw)',fmt(cl.beam));
+  }
+  ctx.restore();
 }
 // Draws the client-facing info panel (name + photo + equipment list + gases) onto the export canvas
 function drawClientPanel(ctx,ent,x,y,w,h,S){
@@ -2001,28 +2245,18 @@ function drawClientPanel(ctx,ent,x,y,w,h,S){
       cy+=ph+18*S;
     }
   }
-  // EQUIPMENT — FIXED 2-column rows so pairs never shift: Badge|Alarm, Camera|Camera2, Blackline|Inlets
+  // EQUIPMENT — one row per item, count on the right. Zeros are shown too.
   section('EQUIPMENT');
-  const clean=v=>(v||'').toString().trim();
-  const rowsEq=[
-    [['Badge Unit',ent.co],['Alarm Unit',ent.lel]],
-    [['Camera Unit',ent.h2s],['Camera Unit 2',ent.cam2]],
-    [['Blackline',ent.blackline],['Inlets',ent.o2]],
-  ];
   ctx.font=`${13*S}px 'Exo 2',sans-serif`;
-  const colXL=x+pad, colXR=x+w/2+2*S;
-  const colVL=x+w/2-pad, colVR=x+w-pad;
-  let anyEq=false;
-  rowsEq.forEach(pair=>{
-    const L=[pair[0][0],clean(pair[0][1])], R=[pair[1][0],clean(pair[1][1])];
-    const showL=L[1]!==''&&L[1]!=='0', showR=R[1]!==''&&R[1]!=='0';
-    if(!showL&&!showR)return; // skip a fully-empty row
-    anyEq=true;const rowY=cy;
-    if(showL){ctx.fillStyle='#9fb0c8';ctx.textAlign='left';ctx.fillText(L[0],colXL,rowY);ctx.fillStyle='#ffffff';ctx.textAlign='right';ctx.fillText(L[1],colVL,rowY);}
-    if(showR){ctx.fillStyle='#9fb0c8';ctx.textAlign='left';ctx.fillText(R[0],colXR,rowY);ctx.fillStyle='#ffffff';ctx.textAlign='right';ctx.fillText(R[1],colVR,rowY);}
+  EQ_FIELDS.forEach(([key,lab])=>{
+    const v=eqNum(ent[key]);
+    ctx.fillStyle='#9fb0c8';ctx.textAlign='left';ctx.fillText(lab,x+pad,cy);
+    ctx.fillStyle=v>0?'#ffffff':'#5a6b82';ctx.textAlign='right';
+    ctx.font=`700 ${14*S}px 'Exo 2',sans-serif`;
+    ctx.fillText(String(v),x+w-pad,cy);
+    ctx.font=`${13*S}px 'Exo 2',sans-serif`;
     cy+=22*S;
   });
-  if(!anyEq){ctx.fillStyle='#5a6b82';ctx.textAlign='left';ctx.fillText('\u2014 none listed',x+pad,cy);cy+=22*S;}
   cy+=10*S;
   // GASES (full width)
   section('GASES');
@@ -2085,8 +2319,9 @@ function wrapText(ctx,text,x,y,maxW,lh){
 }
 function doDownloadPNG(canvas,ent){
   const a=document.createElement('a');a.href=canvas.toDataURL('image/png');
-  const suffix=ent?('_'+(ent.label||'entrance').replace(/[^a-zA-Z0-9]+/g,'_')):'';
-  a.download=getProjName().replace(/\s+/g,'_')+suffix+'.png';a.click();
+  const safe=v=>(v||'').toString().replace(/[^a-zA-Z0-9]+/g,'_').replace(/^_|_$/g,'');
+  const suffix=ent?('_'+safe(ent.label||'entrance')):'';
+  a.download=safe(getProjName())+'_'+safe(getPageName())+suffix+'.png';a.click();
 }
 
 // ── RENDER ─────────────────────────────────────────────────────────────────────
@@ -2294,72 +2529,6 @@ function renderUI(){
 
 // init
 setTool('select');updateStatusCounts();
-
-// ── WIND WIDGET ─────────────────────────────────────────────────────────────
-// Direction string → needle rotation degrees (wind blows TO = +180 from met.)
-const WIND_DIR_DEG={N:180,NNO:202.5,NO:225,ONO:247.5,O:270,OZO:292.5,ZO:315,ZZO:337.5,Z:0,ZZW:22.5,ZW:45,WZW:67.5,W:90,WNW:112.5,NW:135,NNW:157.5,VAR:0,STIL:0};
-let windStationId=null,windTimer=null;
-
-function windNorm(r){return r?String(r).toUpperCase().trim():'VAR';}
-function windDisp(r){const d=windNorm(r);return d.length>3?d.slice(0,3):d;}
-function windSetNeedle(raw){
-  const d=windNorm(raw);
-  const deg=WIND_DIR_DEG[d]??WIND_DIR_DEG[d.slice(0,2)]??0;
-  const ndl=document.getElementById('wind-needle');
-  if(ndl)ndl.style.transform=`rotate(${deg}deg)`;
-  const dirEl=document.getElementById('wind-dir');
-  if(dirEl)dirEl.textContent=windDisp(raw)||'---';
-}
-
-async function windFetchByStation(){
-  if(!windStationId)return;
-  try{
-    const r=await fetch('https://data.buienradar.nl/2.0/feed/json');
-    const d=await r.json();
-    const s=d.actual.stationmeasurements.find(x=>x.stationid===windStationId);
-    if(!s)return;
-    const spd=document.getElementById('wind-spd');
-    if(spd)spd.textContent=s.windspeed!=null?s.windspeed.toFixed(1):'--';
-    windSetNeedle(s.winddirection);
-  }catch(e){console.warn('Wind fetch:',e);}
-}
-
-function windHaversine(la1,lo1,la2,lo2){
-  const R=6371,dL=(la2-la1)*Math.PI/180,dO=(lo2-lo1)*Math.PI/180;
-  const a=Math.sin(dL/2)**2+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dO/2)**2;
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-async function windLookupCity(city){
-  city=(city||'').trim();
-  if(!city||city==='Destination'){windSetNeedle('VAR');return;}
-  try{
-    const geo=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)},Netherlands&format=json&limit=1`);
-    const gd=await geo.json();
-    if(!gd.length)return;
-    const lat=parseFloat(gd[0].lat),lon=parseFloat(gd[0].lon);
-    const r=await fetch('https://data.buienradar.nl/2.0/feed/json');
-    const d=await r.json();
-    const stations=d.actual.stationmeasurements;
-    let best=null,bestDist=Infinity;
-    stations.forEach(s=>{
-      if(!s.lat||!s.lon)return;
-      const dist=windHaversine(lat,lon,s.lat,s.lon);
-      if(dist<bestDist){bestDist=dist;best=s;}
-    });
-    if(!best)return;
-    windStationId=best.stationid;
-    const spd=document.getElementById('wind-spd');
-    if(spd)spd.textContent=best.windspeed!=null?best.windspeed.toFixed(1):'--';
-    windSetNeedle(best.winddirection);
-    if(windTimer)clearInterval(windTimer);
-    windTimer=setInterval(windFetchByStation,120000);
-  }catch(e){console.warn('Wind lookup:',e);}
-}
-
-window.addEventListener('load',()=>{
-  const d=document.getElementById('proj-dest').value;
-  if(d&&d!=='Destination')windLookupCity(d);
-});
 
 </script>
 
